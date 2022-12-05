@@ -3,3 +3,52 @@
   "clientSecret": "kCdm-N8WMtugMTRWzdZ_gNhWsP6AvZSB99yaCqAyDza6phprbHygTDtGoeK-A6TimTwbwXEUR7BYI2jXTZEcIOo-RdBFYJZ,Lsy920__10dvkKHjL_OZniiTrZLov5.o"
   "token": "AstraCS:TpcDqtjpqjNHgTLogHYjUvpo:9af8b9bf301fc86ade0db39a38a74ad9549c4879e9137c04ccaf9fd27c96bcee"
 }
+
+
+SECURE CONNECT DOWNLOAD BUNDLE
+https://datastax-cluster-config-prod.s3.us-east-2.amazonaws.com/702f9f06-6f5e-4972-8274-7eb6f983621e-1/secure-connect-cassandra-project.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2AIQRQ76S2JCB77W%2F20221205%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20221205T063815Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=b2f7868951986bd1e894204bbf13e191b0275b1d84dce2709c0527918371a9e5
+
+
+
+Prerequisites
+Use the Download Bundle button above to obtain connection credentials to your database.
+Download and install a supported Python version. Python 2.7, 3.4, 3.5 and 3.6 are supported.
+If you do not already have one, get an Application Token and set the role to “API Administrator User”.
+Install the DataStax Python Driver
+pip install cassandra-driver
+Verify that the DataStax Python driver installed successfully:
+
+python -c 'import cassandra; print (cassandra.__version__)'
+The version number displays in the console output: 3.23.0 or greater.
+
+Creating a connection
+Create a connect_database.py file in the main directory for your Python project:
+
+mkdir python_project
+cd python_project
+touch connect_database.py
+Copy the following connection code into the connect_database.py file:
+
+from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
+
+cloud_config= {
+         'secure_connect_bundle': '<</PATH/TO/>>secure-connect-cassandra-project.zip'
+}
+auth_provider = PlainTextAuthProvider('<<CLIENT ID>>', '<<CLIENT SECRET>>')
+cluster = Cluster(cloud=cloud_config, auth_provider=auth_provider)
+session = cluster.connect()
+
+row = session.execute("select release_version from system.local").one()
+if row:
+      print(row[0])
+else:
+      print("An error occurred.")
+Ensure you use your App Token's Client ID, Client Secret, and path/to/secure-connect-database_name.zip with the path to your SCB. You can download it by clicking on the Download Bundle button at the top of this page.
+
+This code creates a Cluster instance to connect to your Astra DB, runs a CQL query, and prints the output to the console. As the name suggests, you will typically have one instance of Cluster for each Cassandra cluster you want to interact with.
+
+Run connection
+Run connect_database.py:
+
+python ./connect_database.py
