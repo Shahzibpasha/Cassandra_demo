@@ -1,0 +1,394 @@
+pip install cassandra-driver
+
+
+     
+Collecting cassandra-driver
+  Downloading cassandra_driver-3.25.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl (3.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.7/3.7 MB 73.9 MB/s eta 0:00:00:00:01
+Requirement already satisfied: six>=1.9 in /opt/conda/lib/python3.10/site-packages (from cassandra-driver) (1.16.0)
+Collecting geomet<0.3,>=0.1
+  Downloading geomet-0.2.1.post1-py3-none-any.whl (18 kB)
+Requirement already satisfied: click in /opt/conda/lib/python3.10/site-packages (from geomet<0.3,>=0.1->cassandra-driver) (8.1.3)
+Installing collected packages: geomet, cassandra-driver
+Successfully installed cassandra-driver-3.25.0 geomet-0.2.1.post1
+Note: you may need to restart the kernel to use updated packages.
+
+import cassandra
+print(cassandra.__version__)
+
+
+     
+3.25.0
+
+from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
+
+cloud_config= {
+         'secure_connect_bundle': 'secure-connect-cassandra-demo-1.zip'
+}
+auth_provider = PlainTextAuthProvider('IRjTvTJtGIweymSWcbJldDPO', 'ICBU81,3UdX7u5ZArQg421OiX9yQGCEGG,oHpwKzAnAUeIK48DYTn48oY5S.P_.i_cJ2AR8xY,LpT6J9lnXyfm-hM2MElXS2CIe55_ie5zXdtzr2s0kgtN0-KWtDkZ6N')
+cluster = Cluster(cloud=cloud_config, auth_provider=auth_provider)
+session = cluster.connect()
+
+result = session.execute("select release_version from system.local")
+
+row = result.one()
+
+# print(row)
+if row:
+      print(row[0])
+else:
+      print("An error occurred.")
+
+
+     
+4.0.0.6816
+
+# Command to create keyspace in Cassandra
+try:
+    query = "create keyspace employee_management with replication = {'class' : 'SimpleStrategy', 'replication_factor' : 3}"
+    session.execute(query)
+    print("Keyspace Created Successfully !!")
+except Exception as err:
+    print("Exception Occured while creating Keyspace : ",err)
+
+
+     
+Exception Occured while creating Keyspace :  Error from server: code=2100 [Unauthorized] message="Missing correct permission on employee_management.: Keyspace management is currently only supported at https://astra.datastax.com/org/72c96abf-53dd-452c-b0ab-1fdce5b2f464/database/81299d90-1245-4ea6-b51f-4833d243c02b"
+
+# Command to Alter the keyspace in Cassandra
+try:
+    query = "alter keyspace employee_management with replication = {'class' : 'SimpleStrategy', 'replication_factor' : 2}"
+    session.execute(query)
+    print("Keyspace Altered Successfully !!")
+except Exception as err:
+    print("Exception Occured while altering Keyspace : ",err)
+
+
+     
+
+# Command to Drop the keyspace in Cassandra
+try:
+    query = "drop keyspace employee_management"
+    session.execute(query)
+    print("Keyspace Dropped Successfully !!")
+except Exception as err:
+    print("Exception Occured while dropping the Keyspace : ",err)
+
+
+     
+Inside the keyspace
+
+# Command to use a keyspace
+try:
+    query = "use test_keyspace"
+    session.execute(query)
+    print("Inside the keyspace")
+except Exception as err:
+    print("Exception Occured while using Keyspace : ",err)
+
+
+     
+Inside the keyspace
+
+# Command to create a table inside a KEyspace
+try:
+    query = """create table employee(
+                emp_id int,
+                emp_name varchar,
+                emp_salary int,
+                emp_dept varchar,
+                emp_email varchar,
+                emp_phone varchar,
+                primary key (emp_id, emp_dept)
+              )
+            """
+    session.execute(query)
+    print("Table created inside the keyspace")
+except Exception as err:
+    print("Exception Occured while creating the table : ",err)
+
+
+     
+Table created inside the keyspace
+
+# Alter the table in cassandra to drop a column
+try:
+    query = "alter table employee drop emp_email"
+    session.execute(query)
+    print("Column dropped successfully !!")
+except Exception as err:
+    print("Exception Occured while dropping the column: ",err)
+
+
+     
+Column dropped successfully !!
+
+# Alter the table in cassandra to add a new column
+try:
+    query = "alter table employee add emp_email text"
+    session.execute(query)
+    print("Column added successfully !!")
+except Exception as err:
+    print("Exception Occured while adding the column: ",err)
+
+
+     
+Column added successfully !!
+
+# Drop a table in cassandra
+try:
+    query = "drop table employee"
+    session.execute(query)
+    print("Table dropped successfully !!")
+except Exception as err:
+    print("Exception Occured while dropping the table: ",err)
+
+
+     
+
+# Insert data into cassandra table
+try:
+    query = "insert into employee(emp_id, emp_name, emp_salary, emp_dept, emp_email, emp_phone) values(1, 'Shashank', 10000, 'Software', 'abc.gmail.com','+91 768467474')"
+    session.execute(query)
+    print("Record inserted successfully !!")
+except Exception as err:
+    print("Exception Occured while inserting the data into table: ",err)
+
+
+     
+Record inserted successfully !!
+
+# Insert data into cassandra table
+try:
+    query = "insert into employee(emp_id, emp_name, emp_salary, emp_dept, emp_email, emp_phone) values(2, 'Rahul', 20000, 'IT', 'xyx.gmail.com','+91 908467474')"
+    session.execute(query)
+    print("Record inserted successfully !!")
+except Exception as err:
+    print("Exception Occured while inserting the data into table: ",err)
+
+
+     
+Record inserted successfully !!
+
+# Insert data into cassandra table
+try:
+    query = "insert into employee(emp_id, emp_name, emp_salary, emp_dept, emp_email, emp_phone) values(3, 'Sunny', 22000, 'HR', 'klm.gmail.com','+91 800067474')"
+    session.execute(query)
+    print("Record inserted successfully !!")
+except Exception as err:
+    print("Exception Occured while inserting the data into table: ",err)
+
+
+     
+Record inserted successfully !!
+
+# Insert data into cassandra table
+try:
+    query = "insert into employee(emp_id, emp_name, emp_salary, emp_dept, emp_email, emp_phone) values(4, 'Vishal', 30000, 'Software', 'mno.gmail.com','+91 600467474')"
+    session.execute(query)
+    print("Record inserted successfully !!")
+except Exception as err:
+    print("Exception Occured while inserting the data into table: ",err)
+
+
+     
+Record inserted successfully !!
+
+# Select query on cassandra table
+try:
+    query = "select * from employee"
+    result = session.execute(query)
+    for row in result:
+        print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, emp_dept='Software', emp_email='abc.gmail.com', emp_name='Shashank', emp_phone='+91 768467474', emp_salary=10000)
+Row(emp_id=2, emp_dept='IT', emp_email='xyx.gmail.com', emp_name='Rahul', emp_phone='+91 908467474', emp_salary=20000)
+Row(emp_id=4, emp_dept='Software', emp_email='mno.gmail.com', emp_name='Vishal', emp_phone='+91 600467474', emp_salary=30000)
+Row(emp_id=3, emp_dept='HR', emp_email='klm.gmail.com', emp_name='Sunny', emp_phone='+91 800067474', emp_salary=22000)
+
+# Select query for specific columns in cassandra table
+try:
+    query = "select emp_id, emp_name from employee"
+    result = session.execute(query)
+    for row in result:
+        print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, emp_name='Shashank')
+Row(emp_id=2, emp_name='Rahul')
+Row(emp_id=4, emp_name='Vishal')
+Row(emp_id=3, emp_name='Sunny')
+
+# Select query for specific columns in cassandra table and how to access from Row object
+try:
+    query = "select emp_id, emp_name from employee"
+    result = session.execute(query)
+    # option 1
+    for row in result:
+        print("Emp ID : ", row[0])
+        print("Emp Name : ", row[1])
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Emp ID :  1
+Emp Name :  Shashank
+Emp ID :  2
+Emp Name :  Rahul
+Emp ID :  4
+Emp Name :  Vishal
+Emp ID :  3
+Emp Name :  Sunny
+
+# Select query for specific columns in cassandra table and how to access from Row object
+# Doesn't work
+try:
+    query = "select emp_id, emp_name from employee"
+    result = session.execute(query)
+    # option 2
+    for row in result:
+        print("Emp ID : ", row['emp_id'])
+        print("Emp Name : ", row['emp_name'])
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Exception Occured while selecting the data from table:  tuple indices must be integers or slices, not str
+
+# Write a query to get total count of employees
+try:
+    query = "select count(*) from employee"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+    print(row[0])
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(count=4)
+4
+
+# Write a query to find maximum salary from employee table
+try:
+    query = "select max(emp_salary) from employee"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+    print(row[0])
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(system_max_emp_salary=30000)
+30000
+
+# Write a query to filter data from cassandra table or how to use where clause
+# Rules for where clause - It can be used effectively with high performance for given below type of columns
+# 1.) Partition Key (Single or Composite)
+                   #OR
+# 2.) if Cluster column  used in where clause then it should be with Partition Key
+                   #OR
+# 3.) A column on which we have applied the index
+                   #OR
+# 4.) A column which is not part of partition key or index column or clustering column then we can use where clause but we have to
+# use keyword ALLOW FILTERING - it will be a super slow performance when data volume is very high
+
+try:
+    query = "select * from employee where emp_name='Shashank' ALLOW FILTERING"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, emp_dept='Software', emp_email='abc.gmail.com', emp_name='Shashank', emp_phone='+91 768467474', emp_salary=10000)
+
+# where clause for Partition key only or Rule no -1
+
+try:
+    query = "select * from employee where emp_id=2"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=2, emp_dept='IT', emp_email='xyx.gmail.com', emp_name='Rahul', emp_phone='+91 908467474', emp_salary=20000)
+
+# where clause for Clustering key only or Rule no - 2 
+
+try:
+    query = "select * from employee where emp_dept='Software' and emp_id=1"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, emp_dept='Software', emp_email='abc.gmail.com', emp_name='Shashank', emp_phone='+91 768467474', emp_salary=10000)
+
+# We have another composite partition key
+
+priamry key ( (employeeid, fname) , dept )
+
+select * from employee where employeeid = 'x' and dept = 'software' and fname = 'shashank'  # Wrong query
+
+select * from employee where dept = 'software' and employeeid = 'x' and fname = 'shashank'   # Correct query
+
+
+     
+
+# Group by in cassandra  -  Allowed for all columns which are part of Primary Key
+# Follow given below rules
+# Rule - 1 : Use only partition key in the group by
+              #OR
+# Rule - 2 : if Cluster key column is used then follow the actual declared sequence in the primary key
+try:
+    query = "select emp_id, sum(emp_salary) as sum_salary from employee group by emp_id"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, sum_salary=10000)
+
+# Group by in cassandra 
+# Rule - 2 : if Cluster key column is used then follow the actual declared sequence in the primary key
+try:
+    query = "select emp_id, emp_dept, sum(emp_salary) as sum_salary from employee group by emp_id, emp_dept"
+    result = session.execute(query)
+    row = result.one()
+    print(row)
+except Exception as err:
+    print("Exception Occured while selecting the data from table: ",err)
+
+
+     
+Row(emp_id=1, emp_dept='Software', sum_salary=10000)
+
+ 
+
+
+     
